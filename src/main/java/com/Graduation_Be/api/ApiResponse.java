@@ -1,4 +1,4 @@
-package com.Graduation_Be.Api;
+package com.Graduation_Be.api;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

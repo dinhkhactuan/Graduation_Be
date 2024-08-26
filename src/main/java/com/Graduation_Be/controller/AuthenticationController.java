@@ -7,12 +7,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping(value = "/tuan")
+@RequestMapping(value = "/auth")
 public class AuthenticationController {
     @Autowired
     private AuthenticationServiceImpl authenticationServiceIml;
 
-    @PostMapping(value = "/abc")
+    @PostMapping(value = "/login")
     public AuthenticationResponse abc (@RequestBody  AuthenticationRequest authenticationRequest){
         return authenticationServiceIml.Authenticated(authenticationRequest);
     }
