@@ -4,8 +4,10 @@ package com.Graduation_Be.service;
 import com.Graduation_Be.dto.respone.RoleResponseDto;
 import com.Graduation_Be.dto.resquest.roleDto.RoleCreateRequestDto;
 import com.Graduation_Be.dto.resquest.roleDto.RoleRequestDto;
+import com.Graduation_Be.model.RoleEntity;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface RoleService {
 
@@ -13,7 +15,7 @@ public interface RoleService {
     public List<RoleResponseDto> getListRole();
 
     //getOne
-    public RoleResponseDto getOneRole();
+    public Optional<RoleResponseDto> getOneRole(String id);
 
     //add
     public void addRole(RoleCreateRequestDto roleCreateRequestDto);

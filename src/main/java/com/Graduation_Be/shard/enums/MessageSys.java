@@ -5,5 +5,5 @@ public enum MessageSys {
     ID_NOT_EXIST,
     NOT_FOUND,
     ERROR_SERVER,
-
+    SUSSCESS
 }

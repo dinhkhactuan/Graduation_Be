@@ -5,12 +5,21 @@ import com.Graduation_Be.dto.resquest.roleDto.RoleCreateRequestDto;
 import com.Graduation_Be.dto.resquest.roleDto.RoleRequestDto;
 import com.Graduation_Be.model.RoleEntity;
 import org.mapstruct.Mapper;
+import org.springframework.stereotype.Component;
 
-@Mapper
+import java.util.Optional;
+
+@Mapper(componentModel = "spring")
+@Component
 public interface RoleMapper {
     RoleEntity toRoleEntity (RoleRequestDto roleRequestDto);
 
     RoleEntity toRoleCreateEntity (RoleCreateRequestDto roleCreateRequestDto);
 
     RoleResponseDto toRoleResponse (RoleEntity roleEntity);
+
+    default Optional<RoleResponseDto> toOptinaltoRoleResonseDto(Optional<RoleEntity> roleEntity) {
+        return roleEntity.map(this::toRoleResponse);
+    }
+
 }

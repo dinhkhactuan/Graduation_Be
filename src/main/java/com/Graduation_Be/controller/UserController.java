@@ -1,9 +1,11 @@
 package com.Graduation_Be.controller;
+import com.Graduation_Be.api.ApiResponse;
 import com.Graduation_Be.dto.respone.UserResponseDto;
 import com.Graduation_Be.dto.resquest.user.UserCreateRequestDto;
 
 import com.Graduation_Be.model.UserEntity;
 import com.Graduation_Be.service.impl.UserServiceImpl;
+import com.Graduation_Be.shard.enums.MessageSys;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
@@ -20,9 +22,9 @@ public class UserController {
     }
 
     @GetMapping(value = "")
-    public List<UserResponseDto> GetAllUser (){
+    public ApiResponse<List<UserResponseDto>> GetAllUser (){
         List<UserResponseDto> listUser =  userServiceImpl.getAllUser();
-        return listUser;
+        return new ApiResponse<>(200, MessageSys.SUSSCESS,listUser);
     }
 
     @PostMapping(value = "")
