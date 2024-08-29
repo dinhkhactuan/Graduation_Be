@@ -1,6 +1,8 @@
 package com.Graduation_Be.service.impl;
 import com.Graduation_Be.dto.respone.UserResponseDto;
+import com.Graduation_Be.dto.resquest.roleDto.RoleRequestDto;
 import com.Graduation_Be.dto.resquest.user.UserCreateRequestDto;
+import com.Graduation_Be.dto.resquest.user.UserRequestDto;
 import com.Graduation_Be.exception.exceptionOption.ResourceNotFoundException;
 import com.Graduation_Be.mapper.UserMapper;
 import com.Graduation_Be.model.UserEntity;
@@ -33,6 +35,22 @@ public class UserServiceImpl implements UserService {
 
     public List<UserResponseDto> getAllUser() {
         return userMapper.toListUserRespone(userRepository.findAll());
+    }
+
+    @Override
+    public UserResponseDto updateUser(UserRequestDto userRequestDto) {
+        if(userRepository.existsById(userRequestDto.getUserId())){
+            UserEntity userEntity = userMapper.toUserEntity(userRequestDto);
+            userEntity.builder()
+                    .userName(userRequestDto.getUserName())
+                    .email(userRequestDto.getEmail())
+                    .address(userRequestDto.getAddress())
+                    .userPassword(userRequestDto.getUserPassword())
+                    .build();
+            return userMapper.toUserRespone(userEntity);
+        }
+
+        return null;
     }
 
     @Override
