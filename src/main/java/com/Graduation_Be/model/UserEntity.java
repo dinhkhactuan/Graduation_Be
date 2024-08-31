@@ -12,6 +12,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
+@Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class UserEntity extends BaseModel {
     @Id

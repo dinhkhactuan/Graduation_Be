@@ -11,9 +11,11 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class RoleResponseDto extends BaseModel {
 
-    String roleName;
+    Long roleId;
 
-    String roleDescription;
+    String description;
+
+    String roleCode;
 
 
 }

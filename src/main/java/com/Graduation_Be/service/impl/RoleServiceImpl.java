@@ -26,7 +26,7 @@ public class RoleServiceImpl implements RoleService {
 
     @Override
     public List<RoleResponseDto> getListRole() {
-        return null;
+        return roleMapper.toListRoleResponse(roleRepository.findAll());
     }
 
     @Override
@@ -39,16 +39,31 @@ public class RoleServiceImpl implements RoleService {
 
     @Override
     public void addRole(RoleCreateRequestDto roleCreateRequestDto) {
-
+            RoleEntity roleEntity = roleMapper.toRoleCreateEntity(roleCreateRequestDto);
+            roleRepository.save(roleEntity);
     }
 
     @Override
-    public void updateRole(RoleRequestDto roleRequestDto) {
-
+    public RoleResponseDto updateRole(RoleRequestDto roleRequestDto) {
+        if(roleRequestDto.getRoleCode()!=""){
+            return null;
+        }
+    RoleEntity roleEntity = roleMapper.toRoleEntity(roleRequestDto);
+        roleEntity.builder()
+                .roleCode(roleRequestDto.getRoleCode())
+                .roleId(roleRequestDto.getRoleId())
+                .description(roleRequestDto.getDescription());
+        return roleMapper.toRoleResponse(roleEntity);
     }
 
     @Override
     public void deleteRole(Long roleId) {
+        if(roleId == null){
+            return;
+        }
+        if(roleRepository.existsById(roleId)){
+            roleRepository.deleteById(roleId);
+        }
 
     }
 }

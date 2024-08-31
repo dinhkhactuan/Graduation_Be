@@ -3,6 +3,7 @@ import com.Graduation_Be.api.ApiResponse;
 import com.Graduation_Be.dto.respone.UserResponseDto;
 import com.Graduation_Be.dto.resquest.user.UserCreateRequestDto;
 
+import com.Graduation_Be.dto.resquest.user.UserRequestDto;
 import com.Graduation_Be.model.UserEntity;
 import com.Graduation_Be.service.impl.UserServiceImpl;
 import com.Graduation_Be.shard.enums.MessageSys;
@@ -30,6 +31,12 @@ public class UserController {
     @PostMapping(value = "")
     public void addUser (@RequestBody UserCreateRequestDto userCreateRequestDto){
         userServiceImpl.addUser(userCreateRequestDto);
+    }
+
+    @PutMapping(value = "")
+    public ApiResponse<UserResponseDto> updateUser (@RequestBody UserRequestDto userRequestDto){
+
+        return new ApiResponse<>(200, MessageSys.SUSSCESS, userServiceImpl.updateUser(userRequestDto));
     }
 
     @DeleteMapping(value = "/{userId}")

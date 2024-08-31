@@ -1,6 +1,7 @@
 package com.Graduation_Be.service;
 
 
+import com.Graduation_Be.api.ApiResponse;
 import com.Graduation_Be.dto.respone.RoleResponseDto;
 import com.Graduation_Be.dto.resquest.roleDto.RoleCreateRequestDto;
 import com.Graduation_Be.dto.resquest.roleDto.RoleRequestDto;
@@ -22,7 +23,7 @@ public interface RoleService {
 
     //update
 
-    public void updateRole(RoleRequestDto roleRequestDto);
+    public RoleResponseDto updateRole(RoleRequestDto roleRequestDto);
 
 //    delete
     public void deleteRole (Long roleId);

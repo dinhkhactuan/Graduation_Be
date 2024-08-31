@@ -8,6 +8,7 @@ import java.util.List;
 
 @Entity
 @Data
+@Builder
 @Table(name = "role")
 @NoArgsConstructor
 @AllArgsConstructor
