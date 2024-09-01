@@ -2,11 +2,13 @@ package com.Graduation_Be.service;
 
 
 import com.Graduation_Be.dto.respone.AdvertisementResponseDto;
+import com.Graduation_Be.dto.respone.UserResponseDto;
 import com.Graduation_Be.dto.resquest.advertisementDto.AdvertisementCreateRequestDto;
 import com.Graduation_Be.dto.resquest.advertisementDto.AdvertisementRequestDto;
 
 
 import java.util.List;
+import java.util.Optional;
 
 public interface AdvertiserService {
 
@@ -14,15 +16,18 @@ public interface AdvertiserService {
     public List<AdvertisementResponseDto> getListAdvertiser();
 
     //getOne
-    public AdvertisementResponseDto getOneAdvertiser();
+    public Optional<AdvertisementResponseDto> getOneAdvertiser (Long id);
 
     //add
     public void addAdvertiser(AdvertisementCreateRequestDto advertisementCreateRequestDto);
 
     //update
 
-    public void updateAdvertiser(AdvertisementRequestDto advertisementRequestDto);
+    public AdvertisementResponseDto updateAdvertiser(AdvertisementRequestDto advertisementRequestDto);
 
     //    delete
     public void deleteAdvertiser (Long roleId);
+
+//    xóa all
+    public void deleteAllAdvertiser ();
 }

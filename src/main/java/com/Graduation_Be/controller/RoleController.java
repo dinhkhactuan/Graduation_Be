@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping(value = "role")
+@RequestMapping(value = "/role")
 public class RoleController {
     @Autowired
     private  RoleServiceImpl roleService;

@@ -47,6 +47,7 @@ public class UserServiceImpl implements UserService {
                     .address(userRequestDto.getAddress())
                     .userPassword(userRequestDto.getUserPassword())
                     .build();
+            userRepository.save(userEntity);
             return userMapper.toUserRespone(userEntity);
         }
 
