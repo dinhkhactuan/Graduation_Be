@@ -4,13 +4,15 @@ import com.Graduation_Be.shard.baseModel.BaseModel;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.time.LocalDateTime;
+
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class AdvertisementResponseDto extends BaseModel {
+public class AdvertisementResponseDto {
 
     Long advertisementId;
 
@@ -20,5 +22,7 @@ public class AdvertisementResponseDto extends BaseModel {
 
     String advertisementPosition;
 
+    private LocalDateTime startTime;
 
+    private LocalDateTime endTime;
 }

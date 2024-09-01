@@ -8,6 +8,7 @@ import com.Graduation_Be.shard.baseModel.BaseModel;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 
@@ -16,7 +17,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class UserResponseDto extends BaseModel {
+public class UserResponseDto {
 
     Long  userId;
 
@@ -31,6 +32,10 @@ public class UserResponseDto extends BaseModel {
     String address;
 
     RoleEntity roleEntity;
+
+    private LocalDateTime startTime;
+
+    private LocalDateTime endTime;
 
     List<AdvertisementEntity> advertisementEntities;
 

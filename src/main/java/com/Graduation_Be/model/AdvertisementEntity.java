@@ -13,6 +13,7 @@ import java.util.List;
 @Table(name = "Advertisement")
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class AdvertisementEntity extends BaseModel {
 

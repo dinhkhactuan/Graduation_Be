@@ -1,5 +1,6 @@
 package com.Graduation_Be.model;
 
+import com.Graduation_Be.shard.baseModel.BaseModel;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -13,7 +14,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class RoleEntity {
+public class RoleEntity extends BaseModel {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
