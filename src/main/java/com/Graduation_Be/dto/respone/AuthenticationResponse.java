@@ -12,5 +12,6 @@ public class AuthenticationResponse {
 
     String token;
     Boolean LoginStatus;
+    String roleCode;
 
 }

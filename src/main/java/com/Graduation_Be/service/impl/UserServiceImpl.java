@@ -29,7 +29,7 @@ public class UserServiceImpl implements UserService {
         UserEntity userEntity = userMapper.toUserCreateEntity(userCreateRequestDto);
 
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
-        userEntity.setUserPassword(passwordEncoder.encode((userCreateRequestDto.getUserPassword())));
+        userEntity.setPassword(passwordEncoder.encode((userCreateRequestDto.getUserPassword())));
         userRepository.save(userEntity);
     }
 
@@ -45,7 +45,7 @@ public class UserServiceImpl implements UserService {
                     .userName(userRequestDto.getUserName())
                     .email(userRequestDto.getEmail())
                     .address(userRequestDto.getAddress())
-                    .userPassword(userRequestDto.getUserPassword())
+                    .password(userRequestDto.getUserPassword())
                     .build();
             userRepository.save(userEntity);
             return userMapper.toUserRespone(userEntity);

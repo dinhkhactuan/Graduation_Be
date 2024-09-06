@@ -9,6 +9,7 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.util.Collections;
@@ -20,12 +21,18 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 
     @Autowired
     private UserRepository userRepository;
-
+    @Autowired
+    private PasswordEncoder passwordEncoder;
     @Override
     public Authentication authenticate(Authentication auth) throws AuthenticationException {
+
         String username = auth.getName();
         String pwd = auth.getCredentials().toString();
-        if ("admin".equals(username) && "123456".equals(pwd)) {
+
+        UserEntity user = userRepository.findByUserName(username)
+                .orElseThrow(() -> new BadCredentialsException("User not found"));
+
+        if (passwordEncoder.matches(pwd, user.getPassword())) {
             return new UsernamePasswordAuthenticationToken(username, pwd, Collections.emptyList());
         } else {
             throw new BadCredentialsException("User authentication failed!!!!");

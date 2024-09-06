@@ -1,6 +1,7 @@
 package com.Graduation_Be.model;
 
 import com.Graduation_Be.shard.baseModel.BaseModel;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -28,5 +29,6 @@ public class RoleEntity extends BaseModel {
     String roleCode;
 
     @OneToMany(mappedBy = "roleEntity", cascade = CascadeType.ALL)
+    @JsonIgnore
     List<UserEntity> users;
 }
