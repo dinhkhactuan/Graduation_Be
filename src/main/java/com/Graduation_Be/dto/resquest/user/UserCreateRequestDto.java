@@ -22,6 +22,6 @@ public class UserCreateRequestDto extends BaseModel {
 
     String address;
 
-    String roleId;
+    Long roleId;
 
 }

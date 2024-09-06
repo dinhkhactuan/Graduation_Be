@@ -5,7 +5,9 @@ import com.Graduation_Be.dto.resquest.user.UserCreateRequestDto;
 import com.Graduation_Be.dto.resquest.user.UserRequestDto;
 import com.Graduation_Be.exception.exceptionOption.ResourceNotFoundException;
 import com.Graduation_Be.mapper.UserMapper;
+import com.Graduation_Be.model.RoleEntity;
 import com.Graduation_Be.model.UserEntity;
+import com.Graduation_Be.repository.RoleRepository;
 import com.Graduation_Be.repository.UserRepository;
 import com.Graduation_Be.service.UserService;
 import com.Graduation_Be.shard.enums.MessageSys;
@@ -23,10 +25,19 @@ public class UserServiceImpl implements UserService {
     private UserRepository userRepository;
     @Autowired
     private UserMapper userMapper;
+    @Autowired
+    private RoleRepository roleRepository;
 
     @Override
     public void addUser(UserCreateRequestDto userCreateRequestDto) {
         UserEntity userEntity = userMapper.toUserCreateEntity(userCreateRequestDto);
+
+        // Find the RoleEntity by roleId
+        RoleEntity roleEntity = roleRepository.findById(userCreateRequestDto.getRoleId())
+                .orElseThrow(() -> new ResourceNotFoundException(MessageSys.NOT_FOUND));
+
+        // Set the role for the user
+        userEntity.setRoleEntity(roleEntity);
 
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
         userEntity.setPassword(passwordEncoder.encode((userCreateRequestDto.getUserPassword())));
