@@ -1,11 +1,14 @@
 package com.Graduation_Be.model;
 
 import com.Graduation_Be.shard.baseModel.BaseModel;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "users")
@@ -40,6 +43,7 @@ public class UserEntity extends BaseModel {
     private RoleEntity roleEntity;
 
     @OneToMany(mappedBy = "userEntity", cascade = CascadeType.ALL)
+    @JsonIgnoreProperties("userEntity")
     private List<AdvertisementEntity> advertisementEntities;
 
 }

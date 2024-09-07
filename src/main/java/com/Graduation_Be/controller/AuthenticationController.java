@@ -21,7 +21,7 @@ public class AuthenticationController {
 
 
     @PostMapping(value = "/login")
-    public AuthenticationResponse abc (@RequestBody  AuthenticationRequest authenticationRequest){
+    public AuthenticationResponse login (@RequestBody  AuthenticationRequest authenticationRequest){
         return authenticationServiceIml.Authenticated(authenticationRequest);
     }
 

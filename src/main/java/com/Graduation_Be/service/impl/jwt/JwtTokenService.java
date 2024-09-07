@@ -21,18 +21,15 @@ public class JwtTokenService {
     @Value("${jwt.expiration:10000}")
     private Long expiration;
 
-    public String generateToken(Authentication authentication) {
+    public String generateToken(String username,String role) {
         Instant now = Instant.now();
-        String scope = authentication.getAuthorities().stream()
-                .map(GrantedAuthority::getAuthority)
-                .collect(Collectors.joining(" "));
 
         JwtClaimsSet claims = JwtClaimsSet.builder()
                 .issuer("self")
                 .issuedAt(now)
                 .expiresAt(now.plusSeconds(expiration))
-                .subject(authentication.getName())
-                .claim("scope", scope)
+                .subject(username)
+                .claim("role", role)
                 .build();
 
         return jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
