@@ -7,6 +7,7 @@ import com.Graduation_Be.dto.resquest.advertisementDto.AdvertisementRequestDto;
 import com.Graduation_Be.service.impl.AdvertiserServiceImpl;
 import com.Graduation_Be.shard.enums.MessageSys;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -14,6 +15,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping(value = "/advertisement")
+@PreAuthorize("hasRole('admin') or hasRole('advertisement')")
 public class AdvertisementController {
 
     @Autowired

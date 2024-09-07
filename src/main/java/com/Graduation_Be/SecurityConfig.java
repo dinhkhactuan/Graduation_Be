@@ -37,7 +37,8 @@ public class SecurityConfig {
                 .httpBasic(https -> https.disable())
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests((authz) -> authz
-                        .requestMatchers("/swagger-ui/**","/api-docs/**", "/swagger-ui.html","/auth/**","/user/**").permitAll()
+                        .requestMatchers("/swagger-ui/**","/api-docs/**", "/swagger-ui.html","/auth/**").permitAll()
+                        .requestMatchers("/user/**").hasRole("admin")
                         .anyRequest().authenticated()
                 )
                 .formLogin(logn -> logn.disable())
@@ -76,7 +77,7 @@ public class SecurityConfig {
     @Bean
     public JwtAuthenticationConverter jwtAuthenticationConverter() {
         JwtGrantedAuthoritiesConverter grantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
-        grantedAuthoritiesConverter.setAuthoritiesClaimName("scope");
+        grantedAuthoritiesConverter.setAuthoritiesClaimName("role");
         grantedAuthoritiesConverter.setAuthorityPrefix("ROLE_");
 
         JwtAuthenticationConverter jwtAuthenticationConverter = new JwtAuthenticationConverter();

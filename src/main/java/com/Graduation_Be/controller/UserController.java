@@ -7,6 +7,7 @@ import com.Graduation_Be.dto.resquest.user.UserRequestDto;
 import com.Graduation_Be.model.UserEntity;
 import com.Graduation_Be.service.impl.UserServiceImpl;
 import com.Graduation_Be.shard.enums.MessageSys;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
@@ -16,6 +17,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping(value = "/user")
+//@PreAuthorize("hasRole('admin')")
 public class UserController {
     private final UserServiceImpl userServiceImpl;
     UserController(UserServiceImpl userServiceImpl){
@@ -42,6 +44,11 @@ public class UserController {
     @DeleteMapping(value = "/{userId}")
     public void  deleteUser (@PathVariable Long userId){
         userServiceImpl.deleteUser(userId);
+    }
+
+    @DeleteMapping(value = "")
+    public void  deleteAllUser (){
+        userServiceImpl.deleteAllUser();
     }
 
     @GetMapping(value = "/{userId}")

@@ -13,4 +13,6 @@ public class AuthenticationRequest {
     String userName;
 
     String userPassword;
+
+    Long roleId;
 }
