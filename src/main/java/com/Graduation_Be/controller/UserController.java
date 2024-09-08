@@ -4,12 +4,18 @@ import com.Graduation_Be.dto.respone.UserResponseDto;
 import com.Graduation_Be.dto.resquest.user.UserCreateRequestDto;
 
 import com.Graduation_Be.dto.resquest.user.UserRequestDto;
+import com.Graduation_Be.mapper.UserMapper;
 import com.Graduation_Be.model.UserEntity;
+import com.Graduation_Be.repository.UserRepository;
 import com.Graduation_Be.service.impl.UserServiceImpl;
 import com.Graduation_Be.shard.enums.MessageSys;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -24,10 +30,27 @@ public class UserController {
         this.userServiceImpl = userServiceImpl;
     }
 
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private UserMapper userMapper;
+
     @GetMapping(value = "")
     public ApiResponse<List<UserResponseDto>> GetAllUser (){
         List<UserResponseDto> listUser =  userServiceImpl.getAllUser();
         return new ApiResponse<>(200, MessageSys.SUSSCESS,listUser);
+    }
+
+    @GetMapping("/info")
+    public ResponseEntity<UserResponseDto> getCurrentUser(@AuthenticationPrincipal Jwt jwt) {
+        String username = jwt.getClaimAsString("sub");
+        Optional<UserResponseDto> user = userMapper.toOptionalUserRespone(userRepository.findByUserName(username));
+        if (user != null) {
+            return ResponseEntity.ok(user.get());
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @PostMapping(value = "")
