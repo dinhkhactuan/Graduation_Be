@@ -1,7 +1,10 @@
 package com.Graduation_Be.controller;
 
+import com.Graduation_Be.api.ApiResponse;
 import com.Graduation_Be.dto.respone.AuthenticationResponse;
 import com.Graduation_Be.dto.resquest.AuthenticationRequest;
+import com.Graduation_Be.model.UserEntity;
+import com.Graduation_Be.repository.UserRepository;
 import com.Graduation_Be.service.impl.AuthenticationServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -12,6 +15,7 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtAut
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequestMapping(value = "/auth")
