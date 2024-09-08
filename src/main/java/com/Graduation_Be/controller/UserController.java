@@ -42,16 +42,7 @@ public class UserController {
         return new ApiResponse<>(200, MessageSys.SUSSCESS,listUser);
     }
 
-    @GetMapping("/info")
-    public ResponseEntity<UserResponseDto> getCurrentUser(@AuthenticationPrincipal Jwt jwt) {
-        String username = jwt.getClaimAsString("sub");
-        Optional<UserResponseDto> user = userMapper.toOptionalUserRespone(userRepository.findByUserName(username));
-        if (user != null) {
-            return ResponseEntity.ok(user.get());
-        } else {
-            return ResponseEntity.notFound().build();
-        }
-    }
+
 
     @PostMapping(value = "")
     public void addUser (@RequestBody UserCreateRequestDto userCreateRequestDto){
