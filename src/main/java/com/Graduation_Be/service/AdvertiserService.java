@@ -2,6 +2,7 @@ package com.Graduation_Be.service;
 
 
 import com.Graduation_Be.dto.respone.AdvertisementResponseDto;
+import com.Graduation_Be.dto.respone.RevenueResponseDto;
 import com.Graduation_Be.dto.respone.UserResponseDto;
 import com.Graduation_Be.dto.resquest.advertisementDto.AdvertisementCreateRequestDto;
 import com.Graduation_Be.dto.resquest.advertisementDto.AdvertisementRequestDto;
@@ -30,4 +31,10 @@ public interface AdvertiserService {
 
 //    xóa all
     public void deleteAllAdvertiser ();
+
+    public void requestApproval(Long id);
+
+    public void approveAdvertisement(Long id);
+
+    public RevenueResponseDto getAdvertisementRevenue(Long id);
 }

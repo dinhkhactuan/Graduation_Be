@@ -1,10 +1,13 @@
 
 package com.Graduation_Be.model;
 import com.Graduation_Be.shard.baseModel.BaseModel;
+import com.Graduation_Be.shard.enums.AdvertisementStatus;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 
 //quang cao
@@ -31,10 +34,22 @@ public class AdvertisementEntity extends BaseModel {
     @Column(name = "advertisementPosition")
     String advertisementPosition;
 
+    @Enumerated(EnumType.STRING)
+    AdvertisementStatus status;
+
+    @Column(name = "startDate")
+    LocalDate startDate;
+
+    @Column(name = "endDate")
+    LocalDate endDate;
+
+    @Column(name = "price")
+    BigDecimal price;
+
     @ManyToOne
     @JoinColumn(name = "userId")
     UserEntity userEntity;
 
-    @OneToMany(mappedBy = "advertisementEntity")
+    @OneToMany(mappedBy = "advertisementEntity",cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     List<AdvertisingFieldId> advertisingFields;
 }
