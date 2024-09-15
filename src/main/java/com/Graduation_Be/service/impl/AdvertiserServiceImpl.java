@@ -7,7 +7,10 @@ import com.Graduation_Be.dto.resquest.advertisementDto.AdvertisementCreateReques
 import com.Graduation_Be.dto.resquest.advertisementDto.AdvertisementRequestDto;
 import com.Graduation_Be.exception.exceptionOption.ResourceNotFoundException;
 import com.Graduation_Be.mapper.AdvertisementMapper;
-import com.Graduation_Be.model.*;
+import com.Graduation_Be.model.AdvertisementEntity;
+import com.Graduation_Be.model.AdvertisingFieldId;
+import com.Graduation_Be.model.ApprovalRequestEntity;
+import com.Graduation_Be.model.RevenueEntity;
 import com.Graduation_Be.repository.AdveriserRespository;
 import com.Graduation_Be.repository.AdvertisingFieldRepository;
 import com.Graduation_Be.repository.ApprovalRequestRepository;
@@ -135,13 +138,8 @@ public class AdvertiserServiceImpl implements AdvertiserService {
                 .endDate(LocalDate.from(advertisementCreateRequestDto.getEndDate().atTime(LocalTime.MAX)))
                 .price(advertisementCreateRequestDto.getPrice())
                 .status(AdvertisementStatus.PENDING)
-                .advertisingFields(advertisementCreateRequestDto.getAdvertisingFieldIds().stream()
-                        .map(id -> {
-                            AdvertisingFieldId fieldId = new AdvertisingFieldId();
-                            fieldId.setAdvertisingFieldId(id);
-                            return fieldId;
-                        })
-                        .collect(Collectors.toList()))
+                .userId(advertisementCreateRequestDto.getUserId())
+                .AdvertisementFieldId(advertisementCreateRequestDto.getAdvertisingFieldIds().get(0))
                 .build();
         adveriserRespository.save(entity);
     }
