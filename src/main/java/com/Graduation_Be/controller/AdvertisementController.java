@@ -25,7 +25,13 @@ public class AdvertisementController {
 //    get list
     @GetMapping(value = "")
     public ApiResponse<List<AdvertisementResponseDto>> getAll (){
-        return new ApiResponse<List<AdvertisementResponseDto>>(200, MessageSys.SUSSCESS ,  advertiserService.getListAdvertiser());
+        return new ApiResponse<>(200, MessageSys.SUSSCESS, advertiserService.getListAdvertiser());
+    }
+
+    //    get list
+    @GetMapping(value = "user/{id}")
+    public ApiResponse<List<AdvertisementResponseDto>> getAllByUser (@PathVariable long id){
+        return new ApiResponse<>(200, MessageSys.SUSSCESS, advertiserService.getListAdvertiserByUser(id));
     }
 
 //  tạo mới

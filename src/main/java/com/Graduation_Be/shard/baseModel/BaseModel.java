@@ -18,7 +18,7 @@ public abstract class BaseModel implements Serializable {
 
     @CreatedDate
     @Column(name = "created_at", nullable = true, updatable = false)
-    private LocalDateTime createdAt;
+    private LocalDateTime createdAt = LocalDateTime.now();
 
     @LastModifiedDate
     @Column(name = "updated_at")

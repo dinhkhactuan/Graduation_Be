@@ -39,11 +39,6 @@ public interface AdvertisementMapper {
         if (entity.getEndDate() != null) {
             dto.setEndTime(entity.getEndDate().atTime(LocalTime.MAX));
         }
-        if (entity.getAdvertisingFields() != null) {
-            dto.setAdvertisingFields(entity.getAdvertisingFields().stream()
-                    .map(field -> new AdvertisingFieldResponseDto(field.getAdvertisingFieldId(), field.getAdvertisingFieldName()))
-                    .collect(Collectors.toList()));
-        }
     }
 
     AdvertisingFieldResponseDto toAdvertisingFieldResponseDto(AdvertisingFieldId advertisingFieldId);

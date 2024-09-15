@@ -50,6 +50,9 @@ public class AdvertisementEntity extends BaseModel {
     @JoinColumn(name = "userId")
     UserEntity userEntity;
 
+    @Column(name = "AdvertisementFieldId")
+    Long AdvertisementFieldId;
+
     @OneToMany(mappedBy = "advertisementEntity",cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     List<AdvertisingFieldId> advertisingFields;
 }
