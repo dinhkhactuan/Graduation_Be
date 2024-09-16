@@ -2,6 +2,7 @@ package com.Graduation_Be.controller;
 
 import com.Graduation_Be.api.ApiResponse;
 import com.Graduation_Be.dto.respone.AdvertisementResponseDto;
+import com.Graduation_Be.dto.respone.RevenueResponseDto;
 import com.Graduation_Be.dto.resquest.advertisementDto.AdvertisementCreateRequestDto;
 import com.Graduation_Be.dto.resquest.advertisementDto.AdvertisementRequestDto;
 import com.Graduation_Be.service.impl.AdvertiserServiceImpl;
@@ -24,7 +25,13 @@ public class AdvertisementController {
 //    get list
     @GetMapping(value = "")
     public ApiResponse<List<AdvertisementResponseDto>> getAll (){
-        return new ApiResponse<List<AdvertisementResponseDto>>(200, MessageSys.SUSSCESS ,  advertiserService.getListAdvertiser());
+        return new ApiResponse<>(200, MessageSys.SUSSCESS, advertiserService.getListAdvertiser());
+    }
+
+    //    get list
+    @GetMapping(value = "/user/{id}")
+    public ApiResponse<List<AdvertisementResponseDto>> getAllByUser (@PathVariable long id){
+        return new ApiResponse<>(200, MessageSys.SUSSCESS, advertiserService.getListAdvertiserByUser(id));
     }
 
 //  tạo mới
@@ -61,4 +68,26 @@ public class AdvertisementController {
         advertiserService.deleteAllAdvertiser();
         return  new ApiResponse<>(200, MessageSys.SUSSCESS,null);
     }
+// gửi phê duyệt quảng cáo
+    @PostMapping(value = "/{id}/request-approval")
+    public ApiResponse<?>requestApproval(@PathVariable Long id){
+        advertiserService.requestApproval(id);
+        return new ApiResponse<>(200, MessageSys.SUSSCESS, null);
+    }
+
+//    admin phê duyệt quảng cáo
+    @PreAuthorize("hasRole('admin')")
+    @PutMapping(value = "/{id}/approve")
+    public ApiResponse<?> approveAdvertisement(@PathVariable Long id) {
+        advertiserService.approveAdvertisement(id);
+        return new ApiResponse<>(200, MessageSys.SUSSCESS, null);
+    }
+
+//    lấy doanh thu của 1 quảng cáo
+    @GetMapping("/{id}/revenue")
+    public ApiResponse<RevenueResponseDto> getAdvertisementRevenue(@PathVariable Long id) {
+        RevenueResponseDto revenueDto = advertiserService.getAdvertisementRevenue(id);
+        return new ApiResponse<>(200, MessageSys.SUSSCESS, revenueDto);
+    }
+
 }
