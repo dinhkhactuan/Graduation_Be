@@ -29,7 +29,7 @@ public class AdvertisementController {
     }
 
     //    get list
-    @GetMapping(value = "user/{id}")
+    @GetMapping(value = "/user/{id}")
     public ApiResponse<List<AdvertisementResponseDto>> getAllByUser (@PathVariable long id){
         return new ApiResponse<>(200, MessageSys.SUSSCESS, advertiserService.getListAdvertiserByUser(id));
     }
@@ -76,7 +76,7 @@ public class AdvertisementController {
     }
 
 //    admin phê duyệt quảng cáo
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('admin')")
     @PutMapping(value = "/{id}/approve")
     public ApiResponse<?> approveAdvertisement(@PathVariable Long id) {
         advertiserService.approveAdvertisement(id);
