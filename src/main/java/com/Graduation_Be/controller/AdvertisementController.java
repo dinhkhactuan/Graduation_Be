@@ -25,7 +25,13 @@ public class AdvertisementController {
 //    get list
     @GetMapping(value = "")
     public ApiResponse<List<AdvertisementResponseDto>> getAll (){
-        return new ApiResponse<List<AdvertisementResponseDto>>(200, MessageSys.SUSSCESS ,  advertiserService.getListAdvertiser());
+        return new ApiResponse<>(200, MessageSys.SUSSCESS, advertiserService.getListAdvertiser());
+    }
+
+    //    get list
+    @GetMapping(value = "/user/{id}")
+    public ApiResponse<List<AdvertisementResponseDto>> getAllByUser (@PathVariable long id){
+        return new ApiResponse<>(200, MessageSys.SUSSCESS, advertiserService.getListAdvertiserByUser(id));
     }
 
 //  tạo mới
@@ -70,7 +76,7 @@ public class AdvertisementController {
     }
 
 //    admin phê duyệt quảng cáo
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('admin')")
     @PutMapping(value = "/{id}/approve")
     public ApiResponse<?> approveAdvertisement(@PathVariable Long id) {
         advertiserService.approveAdvertisement(id);
@@ -78,9 +84,10 @@ public class AdvertisementController {
     }
 
 //    lấy doanh thu của 1 quảng cáo
-    @GetMapping(value = "/{id}/revenue")
+    @GetMapping("/{id}/revenue")
     public ApiResponse<RevenueResponseDto> getAdvertisementRevenue(@PathVariable Long id) {
-        return new ApiResponse<>(200, MessageSys.SUSSCESS, advertiserService.getAdvertisementRevenue(id));
+        RevenueResponseDto revenueDto = advertiserService.getAdvertisementRevenue(id);
+        return new ApiResponse<>(200, MessageSys.SUSSCESS, revenueDto);
     }
 
 }

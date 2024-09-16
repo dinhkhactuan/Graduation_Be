@@ -1,15 +1,18 @@
 package com.Graduation_Be.service.impl;
 
 import com.Graduation_Be.dto.respone.AdvertisementResponseDto;
+import com.Graduation_Be.dto.respone.AdvertisingFieldResponseDto;
 import com.Graduation_Be.dto.respone.RevenueResponseDto;
-import com.Graduation_Be.dto.respone.UserResponseDto;
-import com.Graduation_Be.dto.resquest.AdvertisingField.AdvertisingFieldResponseDTO;
 import com.Graduation_Be.dto.resquest.advertisementDto.AdvertisementCreateRequestDto;
 import com.Graduation_Be.dto.resquest.advertisementDto.AdvertisementRequestDto;
 import com.Graduation_Be.exception.exceptionOption.ResourceNotFoundException;
 import com.Graduation_Be.mapper.AdvertisementMapper;
-import com.Graduation_Be.model.*;
+import com.Graduation_Be.model.AdvertisementEntity;
+import com.Graduation_Be.model.AdvertisingFieldId;
+import com.Graduation_Be.model.ApprovalRequestEntity;
+import com.Graduation_Be.model.RevenueEntity;
 import com.Graduation_Be.repository.AdveriserRespository;
+import com.Graduation_Be.repository.AdvertisingFieldRepository;
 import com.Graduation_Be.repository.ApprovalRequestRepository;
 import com.Graduation_Be.repository.RevenueRepository;
 import com.Graduation_Be.service.AdvertiserService;
@@ -20,17 +23,24 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
 public class AdvertiserServiceImpl implements AdvertiserService {
     @Autowired
     private AdveriserRespository adveriserRespository;
+
+    @Autowired
+    private AdvertisingFieldRepository advertisingFieldRepository;
     @Autowired
     private AdvertisementMapper advertisementMapper;
 
@@ -41,14 +51,82 @@ public class AdvertiserServiceImpl implements AdvertiserService {
     private ApprovalRequestRepository approvalRequestRepository;
     @Override
     public List<AdvertisementResponseDto> getListAdvertiser() {
+        List<AdvertisementEntity> advertisementEntities = adveriserRespository.findAll();
 
-        return advertisementMapper.toListAdvertiserResponse(adveriserRespository.findAll());
+        // Collect unique AdvertisingFieldIds
+        Set<Long> allFieldIds = advertisementEntities.stream()
+                .map(AdvertisementEntity::getAdvertisementFieldId)
+                .collect(Collectors.toSet());
+
+        // Fetch all AdvertisingFields
+        List<AdvertisingFieldId> allFields = advertisingFieldRepository.findAllById(allFieldIds);
+
+        // Map AdvertisingFields to AdvertisingFieldResponseDto
+        Map<Long, AdvertisingFieldResponseDto> fieldDtoMap = allFields.stream()
+                .collect(Collectors.toMap(
+                        AdvertisingFieldId::getAdvertisingFieldId,
+                        field -> new AdvertisingFieldResponseDto(field.getAdvertisingFieldId(), field.getAdvertisingFieldName())
+                ));
+
+        // Map AdvertisementEntities to AdvertisementResponseDtos
+        return advertisementEntities.stream().map(entity -> {
+            AdvertisementResponseDto dto = new AdvertisementResponseDto();
+            dto.setAdvertisementId(entity.getAdvertisementId());
+            dto.setAdvertisementName(entity.getAdvertisementName());
+            dto.setAdvertisementLink(entity.getAdvertisementLink());
+            dto.setAdvertisementPosition(entity.getAdvertisementPosition());
+            dto.setStartTime(entity.getStartDate() != null ? entity.getStartDate().atStartOfDay() : null);
+            dto.setEndTime(entity.getEndDate() != null ? entity.getEndDate().atTime(LocalTime.MAX) : null);
+            dto.setPrice(entity.getPrice());
+            dto.setStatus(entity.getStatus());
+            dto.setAdvertisingFields(adveriserRespository.getAdvertisingFieldsByAdvertisementId(entity.getAdvertisementId()).stream()
+                    .map(fieldId -> fieldDtoMap.get(fieldId.getAdvertisementFieldId()))
+                    .collect(Collectors.toList()));
+            return dto;
+        }).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<AdvertisementResponseDto> getListAdvertiserByUser(Long userId) {
+        List<AdvertisementEntity> advertisementEntities = adveriserRespository.findAllByUserId(userId);
+
+        // Collect unique AdvertisingFieldIds
+        Set<Long> allFieldIds = advertisementEntities.stream()
+                .map(AdvertisementEntity::getAdvertisementFieldId)
+                .collect(Collectors.toSet());
+
+        // Fetch all AdvertisingFields
+        List<AdvertisingFieldId> allFields = advertisingFieldRepository.findAllById(allFieldIds);
+
+        // Map AdvertisingFields to AdvertisingFieldResponseDto
+        Map<Long, AdvertisingFieldResponseDto> fieldDtoMap = allFields.stream()
+                .collect(Collectors.toMap(
+                        AdvertisingFieldId::getAdvertisingFieldId,
+                        field -> new AdvertisingFieldResponseDto(field.getAdvertisingFieldId(), field.getAdvertisingFieldName())
+                ));
+
+        // Map AdvertisementEntities to AdvertisementResponseDtos
+        return advertisementEntities.stream().map(entity -> {
+            AdvertisementResponseDto dto = new AdvertisementResponseDto();
+            dto.setAdvertisementId(entity.getAdvertisementId());
+            dto.setAdvertisementName(entity.getAdvertisementName());
+            dto.setAdvertisementLink(entity.getAdvertisementLink());
+            dto.setAdvertisementPosition(entity.getAdvertisementPosition());
+            dto.setStartTime(entity.getStartDate() != null ? entity.getStartDate().atStartOfDay() : null);
+            dto.setEndTime(entity.getEndDate() != null ? entity.getEndDate().atTime(LocalTime.MAX) : null);
+            dto.setPrice(entity.getPrice());
+            dto.setStatus(entity.getStatus());
+            dto.setAdvertisingFields(adveriserRespository.getAdvertisingFieldsByAdvertisementId(entity.getAdvertisementId()).stream()
+                    .map(fieldId -> fieldDtoMap.get(fieldId.getAdvertisementFieldId()))
+                    .collect(Collectors.toList()));
+            return dto;
+        }).collect(Collectors.toList());
     }
 
     @Override
     public Optional<AdvertisementResponseDto> getOneAdvertiser(Long id) {
         Optional<AdvertisementEntity> advertisementEntity = Optional.ofNullable(adveriserRespository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException(MessageSys.NOT_FOUND)));;
+                .orElseThrow(() -> new ResourceNotFoundException(MessageSys.NOT_FOUND)));
         return advertisementMapper.toOptionalAdvertisementRespone(advertisementEntity);
     }
 
@@ -62,13 +140,8 @@ public class AdvertiserServiceImpl implements AdvertiserService {
                 .endDate(LocalDate.from(advertisementCreateRequestDto.getEndDate().atTime(LocalTime.MAX)))
                 .price(advertisementCreateRequestDto.getPrice())
                 .status(AdvertisementStatus.PENDING)
-                .advertisingFields(advertisementCreateRequestDto.getAdvertisingFieldIds().stream()
-                        .map(id -> {
-                            AdvertisingFieldId fieldId = new AdvertisingFieldId();
-                            fieldId.setAdvertisingFieldId(id);
-                            return fieldId;
-                        })
-                        .collect(Collectors.toList()))
+                .userId(advertisementCreateRequestDto.getUserId())
+                .AdvertisementFieldId(advertisementCreateRequestDto.getAdvertisingFieldIds().get(0))
                 .build();
         adveriserRespository.save(entity);
     }
@@ -77,7 +150,7 @@ public class AdvertiserServiceImpl implements AdvertiserService {
     public AdvertisementResponseDto updateAdvertiser(AdvertisementRequestDto advertisementRequestDto) {
         if(adveriserRespository.existsById(advertisementRequestDto.getAdvertisementId())){
             AdvertisementEntity advertisementEntity = advertisementMapper.toAdvertiserEntity(advertisementRequestDto);
-            advertisementEntity.builder()
+            AdvertisementEntity.builder()
                     .advertisementName(advertisementRequestDto.getAdvertisementName())
                     .advertisementLink(advertisementRequestDto.getAdvertisementLink())
                     .advertisementPosition(advertisementRequestDto.getAdvertisementPosition())
@@ -124,7 +197,7 @@ public class AdvertiserServiceImpl implements AdvertiserService {
                 .stream().filter((req)->req.getStatus() == ApprovalStatus.PENDING)
                 .findFirst()
                 .orElseThrow(()->new ResourceNotFoundException(MessageSys.NOT_FOUND));
-        approvalRequest.builder()
+        ApprovalRequestEntity.builder()
                 .status(ApprovalStatus.APPROVED)
                 .approvedAt(LocalDateTime.now());
         approvalRequestRepository.save(approvalRequest);
@@ -133,15 +206,35 @@ public class AdvertiserServiceImpl implements AdvertiserService {
     @Override
     public RevenueResponseDto getAdvertisementRevenue(Long id) {
         AdvertisementEntity entity = adveriserRespository.findById(id)
-        .orElseThrow(()->new ResourceNotFoundException(MessageSys.NOT_FOUND));
-        List<RevenueEntity> revenueEntities = revenueRepository.findByAdvertisement(entity);
-        BigDecimal toltalRevenue = revenueEntities.stream()
-                .map(RevenueEntity::getAmount)
-                .reduce(BigDecimal.ZERO,BigDecimal::add);
+                .orElseThrow(() -> new ResourceNotFoundException(MessageSys.NOT_FOUND));
+
+        LocalDate currentDate = LocalDate.now();
+        LocalDate startDate = entity.getStartDate();
+        LocalDate endDate = entity.getEndDate();
+
+        // Tính số ngày quảng cáo đã chạy
+        long totalDays = ChronoUnit.DAYS.between(startDate, endDate) + 1;
+        long daysRun = ChronoUnit.DAYS.between(startDate, currentDate) + 1;
+        daysRun = Math.min(daysRun, totalDays); // Đảm bảo không vượt quá tổng số ngày
+
+        // Tính doanh thu dựa trên số ngày đã chạy
+        BigDecimal dailyRate = entity.getPrice().divide(BigDecimal.valueOf(totalDays), 2, RoundingMode.HALF_UP);
+        BigDecimal totalRevenue = dailyRate.multiply(BigDecimal.valueOf(daysRun));
+
+        // Cập nhật hoặc tạo mới RevenueEntity
+        RevenueEntity revenueEntity = revenueRepository.findByAdvertisement(entity);
+        if(revenueEntity == null){
+            new RevenueEntity();
+        }
+        revenueEntity.setAdvertisement(entity);
+        revenueEntity.setAmount(totalRevenue);
+        revenueEntity.setDate(currentDate);
+        revenueRepository.save(revenueEntity);
+
         return RevenueResponseDto.builder()
                 .advertisementId(id)
-                .amount(toltalRevenue)
-                .date(LocalDate.now())
+                .amount(totalRevenue)
+                .date(currentDate)
                 .build();
     }
 }

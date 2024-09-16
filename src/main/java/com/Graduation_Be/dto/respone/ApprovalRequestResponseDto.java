@@ -1,6 +1,15 @@
 package com.Graduation_Be.dto.respone;
 
+import com.Graduation_Be.model.AdvertisementEntity;
 import com.Graduation_Be.shard.enums.ApprovalStatus;
+import jakarta.persistence.Column;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,10 +22,14 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 public class ApprovalRequestResponseDto {
-    private Long id;
-    private Long advertisementId;
-    private LocalDateTime requestedAt;
-    private LocalDateTime approvedAt;
-    private Long approvedBy;
-    private ApprovalStatus status;
+
+    Long id;
+
+    AdvertisementEntity advertisement;
+
+    LocalDateTime requestedAt;
+
+    LocalDateTime approvedAt;
+
+    ApprovalStatus status;
 }

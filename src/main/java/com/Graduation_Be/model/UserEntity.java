@@ -42,8 +42,4 @@ public class UserEntity extends BaseModel {
     @JoinColumn(name = "roleId")
     private RoleEntity roleEntity;
 
-    @OneToMany(mappedBy = "userEntity", cascade = CascadeType.ALL)
-    @JsonIgnoreProperties("userEntity")
-    private List<AdvertisementEntity> advertisementEntities;
-
 }

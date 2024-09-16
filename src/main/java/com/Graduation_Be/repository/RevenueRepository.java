@@ -9,5 +9,7 @@ import java.util.List;
 
 @Repository
 public interface RevenueRepository extends JpaRepository<RevenueEntity, Long> {
-    List<RevenueEntity> findByAdvertisement(AdvertisementEntity advertisement);
+    RevenueEntity findByAdvertisement(AdvertisementEntity advertisement);
+
+
 }

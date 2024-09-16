@@ -1,12 +1,15 @@
 
 package com.Graduation_Be.dto.resquest.advertisementDto;
-import com.Graduation_Be.shard.baseModel.BaseModel;
-import lombok.*;
+
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 
 
@@ -24,5 +27,5 @@ public class AdvertisementCreateRequestDto {
     LocalDate endDate;
     BigDecimal price;
     List<Long> advertisingFieldIds;
-
+    Long userId;
 }
