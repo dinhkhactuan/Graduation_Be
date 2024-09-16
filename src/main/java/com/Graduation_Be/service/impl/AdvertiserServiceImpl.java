@@ -23,9 +23,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -204,15 +206,35 @@ public class AdvertiserServiceImpl implements AdvertiserService {
     @Override
     public RevenueResponseDto getAdvertisementRevenue(Long id) {
         AdvertisementEntity entity = adveriserRespository.findById(id)
-        .orElseThrow(()->new ResourceNotFoundException(MessageSys.NOT_FOUND));
-        List<RevenueEntity> revenueEntities = revenueRepository.findByAdvertisement(entity);
-        BigDecimal toltalRevenue = revenueEntities.stream()
-                .map(RevenueEntity::getAmount)
-                .reduce(BigDecimal.ZERO,BigDecimal::add);
+                .orElseThrow(() -> new ResourceNotFoundException(MessageSys.NOT_FOUND));
+
+        LocalDate currentDate = LocalDate.now();
+        LocalDate startDate = entity.getStartDate();
+        LocalDate endDate = entity.getEndDate();
+
+        // Tính số ngày quảng cáo đã chạy
+        long totalDays = ChronoUnit.DAYS.between(startDate, endDate) + 1;
+        long daysRun = ChronoUnit.DAYS.between(startDate, currentDate) + 1;
+        daysRun = Math.min(daysRun, totalDays); // Đảm bảo không vượt quá tổng số ngày
+
+        // Tính doanh thu dựa trên số ngày đã chạy
+        BigDecimal dailyRate = entity.getPrice().divide(BigDecimal.valueOf(totalDays), 2, RoundingMode.HALF_UP);
+        BigDecimal totalRevenue = dailyRate.multiply(BigDecimal.valueOf(daysRun));
+
+        // Cập nhật hoặc tạo mới RevenueEntity
+        RevenueEntity revenueEntity = revenueRepository.findByAdvertisement(entity);
+        if(revenueEntity == null){
+            new RevenueEntity();
+        }
+        revenueEntity.setAdvertisement(entity);
+        revenueEntity.setAmount(totalRevenue);
+        revenueEntity.setDate(currentDate);
+        revenueRepository.save(revenueEntity);
+
         return RevenueResponseDto.builder()
                 .advertisementId(id)
-                .amount(toltalRevenue)
-                .date(LocalDate.now())
+                .amount(totalRevenue)
+                .date(currentDate)
                 .build();
     }
 }

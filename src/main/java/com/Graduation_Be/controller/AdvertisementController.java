@@ -84,9 +84,10 @@ public class AdvertisementController {
     }
 
 //    lấy doanh thu của 1 quảng cáo
-    @GetMapping(value = "/{id}/revenue")
+    @GetMapping("/{id}/revenue")
     public ApiResponse<RevenueResponseDto> getAdvertisementRevenue(@PathVariable Long id) {
-        return new ApiResponse<>(200, MessageSys.SUSSCESS, advertiserService.getAdvertisementRevenue(id));
+        RevenueResponseDto revenueDto = advertiserService.getAdvertisementRevenue(id);
+        return new ApiResponse<>(200, MessageSys.SUSSCESS, revenueDto);
     }
 
 }
