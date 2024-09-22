@@ -16,6 +16,7 @@ import com.Graduation_Be.shard.enums.MessageSys;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.streaming.SXSSFSheet;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -129,7 +130,10 @@ public class AdvertisementController {
 
 
         SXSSFWorkbook workbook = new SXSSFWorkbook();
+        workbook.setCompressTempFiles(true);  // Optional: for better performance
         Sheet sheet = workbook.createSheet("Advertisements");
+
+        ((SXSSFSheet) sheet).trackAllColumnsForAutoSizing();
 
         // Create header row
         Row headerRow = sheet.createRow(0);
