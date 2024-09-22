@@ -24,7 +24,7 @@ public class ApprovalRequestServiceImpl implements ApprovalRequestService {
 
     @Override
     public List<ApprovalRequestResponseDto> getRecentRequests() {
-        List<ApprovalRequestEntity> entities = approvalRequestRepository.findAll();
+        List<ApprovalRequestEntity> entities = approvalRequestRepository.findByStatus(ApprovalStatus.PENDING);
         return approvalRequestMapper.To_Approval_Response(entities);
     }
 }

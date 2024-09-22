@@ -199,7 +199,8 @@ public class AdvertiserServiceImpl implements AdvertiserService {
                 .orElseThrow(()->new ResourceNotFoundException(MessageSys.NOT_FOUND));
         ApprovalRequestEntity.builder()
                 .status(ApprovalStatus.APPROVED)
-                .approvedAt(LocalDateTime.now());
+                .approvedAt(LocalDateTime.now())
+                .build();
         approvalRequestRepository.save(approvalRequest);
     }
 
@@ -223,18 +224,33 @@ public class AdvertiserServiceImpl implements AdvertiserService {
 
         // Cập nhật hoặc tạo mới RevenueEntity
         RevenueEntity revenueEntity = revenueRepository.findByAdvertisement(entity);
-        if(revenueEntity == null){
-            new RevenueEntity();
+        if (revenueEntity == null) {
+            revenueEntity = new RevenueEntity();
+            revenueEntity.setAdvertisement(entity);
         }
-        revenueEntity.setAdvertisement(entity);
         revenueEntity.setAmount(totalRevenue);
         revenueEntity.setDate(currentDate);
-        revenueRepository.save(revenueEntity);
+        revenueEntity = revenueRepository.save(revenueEntity);
+
+        // Đảm bảo rằng id không null sau khi lưu
+        if (revenueEntity.getId() == null) {
+            throw new RuntimeException("Failed to generate ID for RevenueEntity");
+        }
 
         return RevenueResponseDto.builder()
-                .advertisementId(id)
-                .amount(totalRevenue)
-                .date(currentDate)
+                .id(revenueEntity.getId())
+                .advertisementId(entity.getAdvertisementId())
+                .amount(revenueEntity.getAmount())
+                .date(revenueEntity.getDate())
                 .build();
+    }
+
+    @Override
+    public BigDecimal  getAllRevenue() {
+        List<AdvertisementEntity> approvedAdvertisers = adveriserRespository.findByStatus(AdvertisementStatus.APPROVED);
+
+        return approvedAdvertisers.stream()
+                .map(AdvertisementEntity::getPrice)  // Giả sử có phương thức getPrice() trả về BigDecimal
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 }

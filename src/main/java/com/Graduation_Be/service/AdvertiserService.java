@@ -8,6 +8,7 @@ import com.Graduation_Be.dto.resquest.advertisementDto.AdvertisementCreateReques
 import com.Graduation_Be.dto.resquest.advertisementDto.AdvertisementRequestDto;
 
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -39,4 +40,6 @@ public interface AdvertiserService {
     public void approveAdvertisement(Long id);
 
     public RevenueResponseDto getAdvertisementRevenue(Long id);
+
+    public BigDecimal getAllRevenue ();
 }
