@@ -19,12 +19,12 @@ RUN apt-get update && apt-get install -y \
 ENV JAVA_TOOL_OPTIONS="-Djava.awt.headless=true -Dsun.java2d.fontconfig=/app/fontconfig"
 
 # Create a basic font configuration file
-RUN echo '<?xml version="1.0"?>\
-<!DOCTYPE fontconfig SYSTEM "fonts.dtd">\
-<fontconfig>\
-    <dir>/usr/share/fonts</dir>\
-    <cachedir>/app/fontconfig</cachedir>\
-</fontconfig>' > /etc/fonts/fonts.conf \
+RUN echo '<?xml version="1.0"?>' > /etc/fonts/fonts.conf && \
+    echo '<!DOCTYPE fontconfig SYSTEM "fonts.dtd">' >> /etc/fonts/fonts.conf && \
+    echo '<fontconfig>' >> /etc/fonts/fonts.conf && \
+    echo '    <dir>/usr/share/fonts</dir>' >> /etc/fonts/fonts.conf && \
+    echo '    <cachedir>/app/fontconfig</cachedir>' >> /etc/fonts/fonts.conf && \
+    echo '</fontconfig>' >> /etc/fonts/fonts.conf
 
 # Create font cache directory and run fc-cache
 RUN mkdir -p /app/fontconfig && fc-cache -v
