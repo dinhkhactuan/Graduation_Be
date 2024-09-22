@@ -13,9 +13,7 @@ import com.Graduation_Be.service.impl.AdvertiserServiceImpl;
 import com.Graduation_Be.shard.enums.AdvertisementStatus;
 import com.Graduation_Be.shard.enums.ApprovalStatus;
 import com.Graduation_Be.shard.enums.MessageSys;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.streaming.SXSSFSheet;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -128,41 +126,73 @@ public class AdvertisementController {
     public ResponseEntity<ByteArrayResource> exportAdvertisements() throws IOException {
         List<AdvertisementEntity> advertisements = adveriserRespository.findByStatus(AdvertisementStatus.APPROVED);
 
-
         SXSSFWorkbook workbook = new SXSSFWorkbook();
-        workbook.setCompressTempFiles(true);  // Optional: for better performance
+        workbook.setCompressTempFiles(true);
         Sheet sheet = workbook.createSheet("Advertisements");
 
         ((SXSSFSheet) sheet).trackAllColumnsForAutoSizing();
 
+        // Create cell styles for header and data
+        CellStyle headerStyle = workbook.createCellStyle();
+        CellStyle dataStyle = workbook.createCellStyle();
+
+        // Set border for all sides
+        headerStyle.setBorderTop(BorderStyle.THIN);
+        headerStyle.setBorderBottom(BorderStyle.THIN);
+        headerStyle.setBorderLeft(BorderStyle.THIN);
+        headerStyle.setBorderRight(BorderStyle.THIN);
+        headerStyle.setFillForegroundColor(IndexedColors.LIGHT_CORNFLOWER_BLUE.getIndex());
+        headerStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+
+        dataStyle.setBorderTop(BorderStyle.THIN);
+        dataStyle.setBorderBottom(BorderStyle.THIN);
+        dataStyle.setBorderLeft(BorderStyle.THIN);
+        dataStyle.setBorderRight(BorderStyle.THIN);
+
         // Create header row
         Row headerRow = sheet.createRow(0);
-        headerRow.createCell(0).setCellValue("ID");
-        headerRow.createCell(1).setCellValue("Name");
-        headerRow.createCell(2).setCellValue("Price");
-        headerRow.createCell(3).setCellValue("Revenue");
-        headerRow.createCell(4).setCellValue("Date");
+        String[] headers = {"ID", "Name", "Price", "Revenue", "Date"};
+        for (int i = 0; i < headers.length; i++) {
+            Cell cell = headerRow.createCell(i);
+            cell.setCellValue(headers[i]);
+            cell.setCellStyle(headerStyle);
+        }
 
         // Populate data rows
         int rowNum = 1;
         for (AdvertisementEntity ad : advertisements) {
             Row row = sheet.createRow(rowNum++);
-            row.createCell(0).setCellValue(ad.getAdvertisementId());
-            row.createCell(1).setCellValue(ad.getAdvertisementName());
-            row.createCell(2).setCellValue(ad.getPrice().doubleValue());
 
-            RevenueEntity revenueEntity= revenueRepository.findByAdvertisement(ad);
-            if(revenueEntity==null){
+            Cell idCell = row.createCell(0);
+            idCell.setCellValue(ad.getAdvertisementId());
+            idCell.setCellStyle(dataStyle);
+
+            Cell nameCell = row.createCell(1);
+            nameCell.setCellValue(ad.getAdvertisementName());
+            nameCell.setCellStyle(dataStyle);
+
+            Cell priceCell = row.createCell(2);
+            priceCell.setCellValue(ad.getPrice().doubleValue());
+            priceCell.setCellStyle(dataStyle);
+
+            RevenueEntity revenueEntity = revenueRepository.findByAdvertisement(ad);
+            if (revenueEntity == null) {
                 revenueEntity = new RevenueEntity();
             }
-            if(revenueEntity.getAmount() == null){
+            if (revenueEntity.getAmount() == null) {
                 revenueEntity.setAmount(BigDecimal.ZERO);
             }
-            if(revenueEntity.getDate() == null){
+            if (revenueEntity.getDate() == null) {
                 revenueEntity.setDate(LocalDate.now());
             }
-            row.createCell(3).setCellValue(revenueEntity.getAmount().doubleValue());
-            row.createCell(4).setCellValue(revenueEntity.getDate().toString());
+
+            Cell revenueCell = row.createCell(3);
+            revenueCell.setCellValue(revenueEntity.getAmount().doubleValue());
+            revenueCell.setCellStyle(dataStyle);
+
+            Cell dateCell = row.createCell(4);
+            dateCell.setCellValue(revenueEntity.getDate().toString());
+            dateCell.setCellStyle(dataStyle);
         }
 
         // Auto-size columns
