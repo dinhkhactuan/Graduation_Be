@@ -5,12 +5,31 @@ import com.Graduation_Be.dto.respone.AdvertisementResponseDto;
 import com.Graduation_Be.dto.respone.RevenueResponseDto;
 import com.Graduation_Be.dto.resquest.advertisementDto.AdvertisementCreateRequestDto;
 import com.Graduation_Be.dto.resquest.advertisementDto.AdvertisementRequestDto;
+import com.Graduation_Be.model.AdvertisementEntity;
+import com.Graduation_Be.model.RevenueEntity;
+import com.Graduation_Be.repository.AdveriserRespository;
+import com.Graduation_Be.repository.RevenueRepository;
 import com.Graduation_Be.service.impl.AdvertiserServiceImpl;
+import com.Graduation_Be.shard.enums.AdvertisementStatus;
+import com.Graduation_Be.shard.enums.ApprovalStatus;
 import com.Graduation_Be.shard.enums.MessageSys;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,6 +40,12 @@ public class AdvertisementController {
 
     @Autowired
     private AdvertiserServiceImpl advertiserService;
+
+    @Autowired
+    private AdveriserRespository adveriserRespository;
+
+    @Autowired
+    private RevenueRepository revenueRepository;
 
 //    get list
     @GetMapping(value = "")
@@ -88,6 +113,70 @@ public class AdvertisementController {
     public ApiResponse<RevenueResponseDto> getAdvertisementRevenue(@PathVariable Long id) {
         RevenueResponseDto revenueDto = advertiserService.getAdvertisementRevenue(id);
         return new ApiResponse<>(200, MessageSys.SUSSCESS, revenueDto);
+    }
+//    lấy doanh thu của tất cả quảng cáo
+    @GetMapping("/revenue")
+    public ApiResponse<BigDecimal> getAllRevenue() {
+        BigDecimal revenue = advertiserService.getAllRevenue();
+        return new ApiResponse<>(200, MessageSys.SUSSCESS,revenue);
+    }
+
+//    xuất file
+    @GetMapping("/export-advertisements")
+    public ResponseEntity<ByteArrayResource> exportAdvertisements() throws IOException {
+        List<AdvertisementEntity> advertisements = adveriserRespository.findByStatus(AdvertisementStatus.APPROVED);
+
+
+        Workbook workbook = new XSSFWorkbook();
+        Sheet sheet = workbook.createSheet("Advertisements");
+
+        // Create header row
+        Row headerRow = sheet.createRow(0);
+        headerRow.createCell(0).setCellValue("ID");
+        headerRow.createCell(1).setCellValue("Name");
+        headerRow.createCell(2).setCellValue("Price");
+        headerRow.createCell(3).setCellValue("Revenue");
+        headerRow.createCell(4).setCellValue("Date");
+
+        // Populate data rows
+        int rowNum = 1;
+        for (AdvertisementEntity ad : advertisements) {
+            Row row = sheet.createRow(rowNum++);
+            row.createCell(0).setCellValue(ad.getAdvertisementId());
+            row.createCell(1).setCellValue(ad.getAdvertisementName());
+            row.createCell(2).setCellValue(ad.getPrice().doubleValue());
+
+            RevenueEntity revenueEntity= revenueRepository.findByAdvertisement(ad);
+            if(revenueEntity==null){
+                revenueEntity = new RevenueEntity();
+            }
+            if(revenueEntity.getAmount() == null){
+                revenueEntity.setAmount(BigDecimal.ZERO);
+            }
+            if(revenueEntity.getDate() == null){
+                revenueEntity.setDate(LocalDate.now());
+            }
+            row.createCell(3).setCellValue(revenueEntity.getAmount().doubleValue());
+            row.createCell(4).setCellValue(revenueEntity.getDate().toString());
+        }
+
+        // Auto-size columns
+        for (int i = 0; i < 5; i++) {
+            sheet.autoSizeColumn(i);
+        }
+
+        // Write to ByteArrayOutputStream
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        workbook.write(outputStream);
+        workbook.close();
+
+        // Prepare response
+        ByteArrayResource resource = new ByteArrayResource(outputStream.toByteArray());
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=advertisements.xlsx")
+                .contentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
+                .contentLength(resource.contentLength())
+                .body(resource);
     }
 
 }

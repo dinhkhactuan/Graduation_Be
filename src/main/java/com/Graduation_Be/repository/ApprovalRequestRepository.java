@@ -13,6 +13,8 @@ import java.util.List;
 public interface ApprovalRequestRepository extends JpaRepository<ApprovalRequestEntity, Long> {
     List<ApprovalRequestEntity> findByAdvertisement(AdvertisementEntity advertisement);
 
+    List<ApprovalRequestEntity> findByStatus(ApprovalStatus status);
+
     List<ApprovalRequestEntity> findByStatusOrderByRequestedAtDesc(ApprovalStatus status, Pageable pageable);
 
 }
