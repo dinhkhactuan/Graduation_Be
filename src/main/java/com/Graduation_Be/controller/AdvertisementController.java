@@ -35,7 +35,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping(value = "/advertisement")
-@PreAuthorize("hasRole('admin') or hasRole('advertisement')")
+@PreAuthorize("hasRole('admin') or hasRole('user')")
 public class AdvertisementController {
 
     @Autowired
