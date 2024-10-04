@@ -202,6 +202,7 @@ public class AdvertiserServiceImpl implements AdvertiserService {
                 .approvedAt(LocalDateTime.now())
                 .build();
         approvalRequestRepository.save(approvalRequest);
+        approvalRequestRepository.deleteById(approvalRequest.getId());
     }
 
     @Override
