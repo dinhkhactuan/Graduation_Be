@@ -9,6 +9,7 @@ import com.Graduation_Be.model.RoleEntity;
 import com.Graduation_Be.repository.RoleRepository;
 import com.Graduation_Be.service.RoleService;
 import com.Graduation_Be.shard.enums.MessageSys;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -45,15 +46,13 @@ public class RoleServiceImpl implements RoleService {
 
     @Override
     public RoleResponseDto updateRole(RoleRequestDto roleRequestDto) {
-        if(roleRequestDto.getRoleCode()!=""){
-            return null;
-        }
-    RoleEntity roleEntity = roleMapper.toRoleEntity(roleRequestDto);
-        roleEntity.builder()
-                .roleCode(roleRequestDto.getRoleCode())
-                .roleId(roleRequestDto.getRoleId())
-                .description(roleRequestDto.getDescription());
-        return roleMapper.toRoleResponse(roleEntity);
+
+        RoleEntity existingRole = roleRepository.findById(roleRequestDto.getRoleId())
+                .orElseThrow(() -> new EntityNotFoundException("Role not found with id: " + roleRequestDto.getRoleId()));
+        existingRole.setRoleCode(roleRequestDto.getRoleCode());
+        existingRole.setDescription(roleRequestDto.getDescription());
+        roleRepository.save(existingRole);
+        return roleMapper.toRoleResponse(existingRole);
     }
 
     @Override
