@@ -21,6 +21,10 @@ public class VNPayServiceImpl {
     private VNPayConfig vnPayConfig;
 
     public String createPayment(long amount, String orderInfo) throws UnsupportedEncodingException {
+        if (amount <= 0) {
+            throw new IllegalArgumentException("Amount must be positive");
+        }
+
         String vnp_Version = "2.1.0";
         String vnp_Command = "pay";
         String vnp_TmnCode = vnPayConfig.getTmnCode();
