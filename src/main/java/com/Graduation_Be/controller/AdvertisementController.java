@@ -59,6 +59,11 @@ public class AdvertisementController {
         return new ApiResponse<>(200, MessageSys.SUSSCESS, advertiserService.getListAdvertiserByUser(id));
     }
 
+    @PutMapping(value = "/user/{id}")
+    public ApiResponse<AdvertisementResponseDto> updateAdvertiserByUser (@RequestBody AdvertisementRequestDto dto){
+        return new ApiResponse<>(200, MessageSys.SUSSCESS, advertiserService.updateAdvertiserByUser(dto));
+    }
+
 //  tạo mới
     @PostMapping(value = "")
     public ApiResponse<?> addAdvertisment (@RequestBody AdvertisementCreateRequestDto advertisementCreateRequestDto){

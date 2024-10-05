@@ -11,16 +11,14 @@ import com.Graduation_Be.model.AdvertisementEntity;
 import com.Graduation_Be.model.AdvertisingFieldId;
 import com.Graduation_Be.model.ApprovalRequestEntity;
 import com.Graduation_Be.model.RevenueEntity;
-import com.Graduation_Be.repository.AdveriserRespository;
-import com.Graduation_Be.repository.AdvertisingFieldRepository;
-import com.Graduation_Be.repository.ApprovalRequestRepository;
-import com.Graduation_Be.repository.RevenueRepository;
+import com.Graduation_Be.repository.*;
 import com.Graduation_Be.service.AdvertiserService;
 import com.Graduation_Be.shard.enums.AdvertisementStatus;
 import com.Graduation_Be.shard.enums.ApprovalStatus;
 import com.Graduation_Be.shard.enums.MessageSys;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -88,39 +86,64 @@ public class AdvertiserServiceImpl implements AdvertiserService {
 
     @Override
     public List<AdvertisementResponseDto> getListAdvertiserByUser(Long userId) {
-        List<AdvertisementEntity> advertisementEntities = adveriserRespository.findAllByUserId(userId);
+            List<AdvertisementEntity> advertisementEntities = adveriserRespository.findAllByUserId(userId);
 
-        // Collect unique AdvertisingFieldIds
-        Set<Long> allFieldIds = advertisementEntities.stream()
-                .map(AdvertisementEntity::getAdvertisementFieldId)
-                .collect(Collectors.toSet());
+        return  advertisementMapper.toListAdvertiserResponse(advertisementEntities);
+//        // Collect unique AdvertisingFieldIds
+//        Set<Long> allFieldIds = advertisementEntities.stream()
+//                .map(AdvertisementEntity::getAdvertisementFieldId)
+//                .collect(Collectors.toSet());
+//
+//        // Fetch all AdvertisingFields
+//        List<AdvertisingFieldId> allFields = advertisingFieldRepository.findAllById(allFieldIds);
+//
+//        // Map AdvertisingFields to AdvertisingFieldResponseDto
+//        Map<Long, AdvertisingFieldResponseDto> fieldDtoMap = allFields.stream()
+//                .collect(Collectors.toMap(
+//                        AdvertisingFieldId::getAdvertisingFieldId,
+//                        field -> new AdvertisingFieldResponseDto(field.getAdvertisingFieldId(), field.getAdvertisingFieldName())
+//                ));
+//
+//        // Map AdvertisementEntities to AdvertisementResponseDtos
+//        return advertisementEntities.stream().map(entity -> {
+//            AdvertisementResponseDto dto = new AdvertisementResponseDto();
+//            dto.setAdvertisementId(entity.getAdvertisementId());
+//            dto.setAdvertisementName(entity.getAdvertisementName());
+//            dto.setAdvertisementLink(entity.getAdvertisementLink());
+//            dto.setAdvertisementPosition(entity.getAdvertisementPosition());
+//            dto.setStartTime(entity.getStartDate() != null ? entity.getStartDate().atStartOfDay() : null);
+//            dto.setEndTime(entity.getEndDate() != null ? entity.getEndDate().atTime(LocalTime.MAX) : null);
+//            dto.setPrice(entity.getPrice());
+//            dto.setStatus(entity.getStatus());
+//            dto.setAdvertisingFields(adveriserRespository.getAdvertisingFieldsByAdvertisementId(entity.getAdvertisementId()).stream()
+//                    .map(fieldId -> fieldDtoMap.get(fieldId.getAdvertisementFieldId()))
+//                    .collect(Collectors.toList()));
+//            return dto;
+//        }).collect(Collectors.toList());
+    }
 
-        // Fetch all AdvertisingFields
-        List<AdvertisingFieldId> allFields = advertisingFieldRepository.findAllById(allFieldIds);
+//    update quangr cao theo user
+    @Override
+    public AdvertisementResponseDto updateAdvertiserByUser(AdvertisementRequestDto requestDto) {
+        AdvertisementEntity entity = adveriserRespository.findById(requestDto.getAdvertisementId())
+                .orElseThrow();
 
-        // Map AdvertisingFields to AdvertisingFieldResponseDto
-        Map<Long, AdvertisingFieldResponseDto> fieldDtoMap = allFields.stream()
-                .collect(Collectors.toMap(
-                        AdvertisingFieldId::getAdvertisingFieldId,
-                        field -> new AdvertisingFieldResponseDto(field.getAdvertisingFieldId(), field.getAdvertisingFieldName())
-                ));
+        entity.setAdvertisementName(requestDto.getAdvertisementName());
+        entity.setAdvertisementLink(requestDto.getAdvertisementLink());
+        entity.setAdvertisementPosition(requestDto.getAdvertisementPosition());
+        entity.setStartDate(requestDto.getStartDate());
+        entity.setEndDate(requestDto.getEndDate());
+        entity.setPrice(requestDto.getPrice());
+        entity.setStatus(requestDto.getStatus());
+        entity.setUserId(requestDto.getUserId());
+        entity.setUserId(requestDto.getUserId());
 
-        // Map AdvertisementEntities to AdvertisementResponseDtos
-        return advertisementEntities.stream().map(entity -> {
-            AdvertisementResponseDto dto = new AdvertisementResponseDto();
-            dto.setAdvertisementId(entity.getAdvertisementId());
-            dto.setAdvertisementName(entity.getAdvertisementName());
-            dto.setAdvertisementLink(entity.getAdvertisementLink());
-            dto.setAdvertisementPosition(entity.getAdvertisementPosition());
-            dto.setStartTime(entity.getStartDate() != null ? entity.getStartDate().atStartOfDay() : null);
-            dto.setEndTime(entity.getEndDate() != null ? entity.getEndDate().atTime(LocalTime.MAX) : null);
-            dto.setPrice(entity.getPrice());
-            dto.setStatus(entity.getStatus());
-            dto.setAdvertisingFields(adveriserRespository.getAdvertisingFieldsByAdvertisementId(entity.getAdvertisementId()).stream()
-                    .map(fieldId -> fieldDtoMap.get(fieldId.getAdvertisementFieldId()))
-                    .collect(Collectors.toList()));
-            return dto;
-        }).collect(Collectors.toList());
+        if (!requestDto.getAdvertisingFieldIds().isEmpty()) {
+            entity.setAdvertisementFieldId(requestDto.getAdvertisingFieldIds().get(0));
+        }
+
+        AdvertisementEntity advertisement = adveriserRespository.save(entity);
+        return  advertisementMapper.toAdvertiserResponse(advertisement);
     }
 
     @Override
