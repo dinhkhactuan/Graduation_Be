@@ -7,4 +7,6 @@ import java.util.List;
 
 public interface ApprovalRequestService {
     public List<ApprovalRequestResponseDto> getRecentRequests();
+
+    public void deleteApprovalRequestById(Long id);
 }

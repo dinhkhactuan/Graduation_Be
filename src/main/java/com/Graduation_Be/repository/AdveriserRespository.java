@@ -18,4 +18,7 @@ public interface AdveriserRespository extends JpaRepository<AdvertisementEntity,
     List<AdvertisementEntity> findByStatus(AdvertisementStatus status);
 
     List<AdvertisementEntity> findAllByUserId(@Param("userId") Long userId);
+
+    AdvertisementEntity findByUserId(Long userId);
+
 }

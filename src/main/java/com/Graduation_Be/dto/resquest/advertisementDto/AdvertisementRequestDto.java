@@ -20,6 +20,7 @@ public class AdvertisementRequestDto  {
     String advertisementName;
     String advertisementLink;
     String advertisementPosition;
+    Long userId;
     LocalDate startDate;
     LocalDate endDate;
     BigDecimal price;

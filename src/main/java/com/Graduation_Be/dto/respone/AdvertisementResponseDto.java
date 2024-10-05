@@ -25,6 +25,8 @@ public class AdvertisementResponseDto {
 
     String advertisementPosition;
 
+    Long userId;
+
     private LocalDateTime startTime;
 
     private LocalDateTime endTime;

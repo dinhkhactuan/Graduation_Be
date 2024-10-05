@@ -19,7 +19,8 @@ public interface AdvertiserService {
 
     List<AdvertisementResponseDto> getListAdvertiserByUser(Long userId);
 
-    //getOne
+    //
+    public AdvertisementResponseDto updateAdvertiserByUser(AdvertisementRequestDto dto);
     public Optional<AdvertisementResponseDto> getOneAdvertiser (Long id);
 
     //add
