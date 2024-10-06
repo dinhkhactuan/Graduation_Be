@@ -18,7 +18,7 @@ public class JwtTokenService {
     @Autowired
     private JwtEncoder jwtEncoder;
 
-    @Value("${jwt.expiration:10000}")
+    @Value("${jwt.expiration:7776000}")
     private Long expiration;
 
     public String generateToken(String username,String role) {
